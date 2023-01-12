@@ -12,7 +12,7 @@ Introduce aims of Milestone 2 and describe the aims and outcomes
 
 ## Milestone 3
 
-Introduce aims of Milestone 2 and describe the aims and outcomes
+Introduce aims of Milestone 3 and describe the aims and outcomes
 
 ```python``` # add code here
 
@@ -20,7 +20,7 @@ Introduce aims of Milestone 2 and describe the aims and outcomes
 
 ## Milestone 4
 
-Introduce aims of Milestone 2 and describe the aims and outcomes
+Introduce aims of Milestone 4 and describe the aims and outcomes
 
 ```python``` # add code here
 
