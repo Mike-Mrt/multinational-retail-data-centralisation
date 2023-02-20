@@ -1,4 +1,6 @@
-import yaml 
+import yaml
+from sqlalchemy import create_engine
+import pandas as pd
 
 class DatabaseConnector:
     '''
@@ -10,4 +12,13 @@ class DatabaseConnector:
         with open('db_creds.yaml') as f:
             self.credentials = yaml.safe_load(f)
 
-    
+    # the init_db_engine() method will read the credentials from the return of the read_db_creds() method and initialise and return an sqlalchemy dastabase engine
+    def init_db_creds(self):
+        self.DATABASE_TYPE = 'postgresql'
+        self.DBAPI = 'psycopg2'
+        self.HOST = self.credentials['RDS_HOST']
+        self.USER = self.credentials['RDS_USER']
+        self.PASSWORD = self.credentials['RDS_PASSWORD']
+        self.DATABASE = self.credentials['RDS_DATABASE']
+        self.PORT = self.credentials['RDS_PORT']
+        self.engine = create_engine(f"{self.DATABASE_TYPE}+{self.DBAPI}://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DATABASE}")
