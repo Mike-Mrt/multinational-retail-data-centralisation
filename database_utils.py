@@ -1,6 +1,6 @@
 import yaml
-from sqlalchemy import create_engine
-import pandas as pd
+import sqlalchemy
+import psycopg2
 
 class DatabaseConnector:
     '''
@@ -21,4 +21,10 @@ class DatabaseConnector:
         self.PASSWORD = self.credentials['RDS_PASSWORD']
         self.DATABASE = self.credentials['RDS_DATABASE']
         self.PORT = self.credentials['RDS_PORT']
-        self.engine = create_engine(f"{self.DATABASE_TYPE}+{self.DBAPI}://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DATABASE}")
+        self.engine = sqlalchemy.create_engine(f"{self.DATABASE_TYPE}+{self.DBAPI}://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DATABASE}")
+    
+    # the list_db_tables() method will list all the tables in the database so you know which tables you can extract data from
+    def list_db_tables(self):
+        self.inspector = sqlalchemy.inspect(self.engine)
+        self.tables = self.inspector.get_table_names()
+        print(self.tables)
