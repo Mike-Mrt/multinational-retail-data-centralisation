@@ -17,16 +17,7 @@ class DataCleaning:
         self.df_user_data = extractor.read_rds_table(table_name, db_connector)
         # Setting the index of this table as index from the data table
         self.df_user_data.set_index('index')
-        # Convert columns 'date_of_birth' and 'join_date' to ISO format:
-        # self.df_user_data['date_of_birth'] = pd.to_datetime(self.df_user_data['date_of_birth'], format="%Y-%m-%d")
-        # self.df_user_data['date_of_birth'] = pd.to_datetime(self.df_user_data['date_of_birth'], format="%Y %B %d")
-
-        # self.df_user_data['join_date'] = pd.to_datetime(self.df_user_data['join_date'], format="%Y-%m-%d")
-        # self.df_user_data['join_date'] = pd.to_datetime(self.df_user_data['date_of_birth'], format="%Y %B %d")
-
-        print(self.df_user_data.head(5))
-        print(self.df_user_data.dtypes)
-
+        
 
 
 
