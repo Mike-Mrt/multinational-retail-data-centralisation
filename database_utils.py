@@ -29,8 +29,3 @@ class DatabaseConnector:
         self.inspector = sqlalchemy.inspect(self.engine)
         self.tables = self.inspector.get_table_names()
         print(self.tables)
-
-testing = DatabaseConnector()
-testing.read_db_creds()
-testing.init_db_creds()
-testing.list_db_tables()
