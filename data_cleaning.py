@@ -26,8 +26,11 @@ class DataCleaning:
         self.null_info = self.df_user_data[(self.df_user_data['country']=='NULL')]
         # Dropped all 21 rows from the main dataframe using the index:
         self.df_user_data = self.df_user_data.drop(self.null_info.index)
-        # 
-
+        # Converting columns: 'country' and 'country_code' and 'company' as dtype=category to save memory:
+        self.df_user_data['country'] = self.df_user_data['country'].astype('category')
+        self.df_user_data['country_code'] = self.df_user_data['country_code'].astype('category')
+        self.df_user_data['company'] = self.df_user_data['company'].astype('category')
+        #
 
 testing = DataCleaning()
 db_connector = database_utils.DatabaseConnector()
