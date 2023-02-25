@@ -30,7 +30,9 @@ class DataCleaning:
         self.df_user_data['country'] = self.df_user_data['country'].astype('category')
         self.df_user_data['country_code'] = self.df_user_data['country_code'].astype('category')
         self.df_user_data['company'] = self.df_user_data['company'].astype('category')
-        #
+        # Correcting the incorrectly typed phone numbers which includes 'x' in a lot of the numbers:
+        self.df_user_data['phone_number'] = self.df_user_data['phone_number'].str.replace('x','')
+        self.df_user_data.to_csv('legacy_data_update.csv',index='False')
 
 testing = DataCleaning()
 db_connector = database_utils.DatabaseConnector()
