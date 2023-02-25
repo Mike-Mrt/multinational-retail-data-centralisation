@@ -22,7 +22,12 @@ class DataCleaning:
         self.incorrect_info = self.df_user_data[(self.df_user_data['country'] == 'GMRBOMI0O1') | (self.df_user_data['country'] == '7ZNO5EBALT') | (self.df_user_data['country'] == '3518UD5CE8') | (self.df_user_data['country'] == 'RQRB7RMTAD') | (self.df_user_data['country'] == 'PNRMPSYR1J') | (self.df_user_data['country'] == '5EFAFD0JLI') | (self.df_user_data['country'] == 'YOTSVPRBQ7') | (self.df_user_data['country'] == '50KUU3PQUF') | (self.df_user_data['country'] == 'EWE3U0DZIV') | (self.df_user_data['country'] == 'XN9NGL5C0B') | (self.df_user_data['country'] == 'S0E37H52ON') | (self.df_user_data['country'] == 'XGI7FM0VBJ') | (self.df_user_data['country'] == 'AJ1ENKS3QL') | (self.df_user_data['country'] == 'I7G4DMDZOZ') | (self.df_user_data['country'] == 'T4WBZSW0XI')]
         # Dropped these rows from the main dataframe using the index:
         self.df_user_data = self.df_user_data.drop(self.incorrect_info.index)
+        # Created another df: null_info to check if all values of the row contain 'NULL' or just the counry column and it was all rows:
+        self.null_info = self.df_user_data[(self.df_user_data['country']=='NULL')]
+        # Dropped all 21 rows from the main dataframe using the index:
+        self.df_user_data = self.df_user_data.drop(self.null_info.index)
         # 
+
 
 testing = DataCleaning()
 db_connector = database_utils.DatabaseConnector()
