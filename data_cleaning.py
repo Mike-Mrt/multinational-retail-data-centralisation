@@ -30,8 +30,14 @@ class DataCleaning:
         self.df_user_data['country'] = self.df_user_data['country'].astype('category')
         self.df_user_data['country_code'] = self.df_user_data['country_code'].astype('category')
         self.df_user_data['company'] = self.df_user_data['company'].astype('category')
-        # Correcting the incorrectly typed phone numbers which includes 'x' in a lot of the numbers:
+        # Correcting the incorrectly typed phone numbers which includes 'x' and '.' and '-' in a lot of the numbers:
         self.df_user_data['phone_number'] = self.df_user_data['phone_number'].str.replace('x','')
+        self.df_user_data['phone_number'] = self.df_user_data['phone_number'].str.replace('.','')
+        self.df_user_data['phone_number'] = self.df_user_data['phone_number'].str.replace('-','')
+        # Converting the 'date_of_birth' column to ISO format, it has dates in 3 different formats, so creating a consistent date ISO date format column:
+        self.df_user_data['date_of_birth'] = pd.to_datetime(self.df_user_data['date_of_birth'], infer_datetime_format=True, errors='coerce').dt.date
+        # Converting the 'join_date' column to ISO format, it has dates in 3 different formats, so creating a consistent date ISO date format column:
+        self.df_user_data['join_date'] = pd.to_datetime(self.df_user_data['join_date'], infer_datetime_format=True, errors='coerce').dt.date
         self.df_user_data.to_csv('legacy_data_update.csv',index='False')
 
 testing = DataCleaning()
