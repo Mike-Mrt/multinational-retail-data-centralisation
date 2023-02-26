@@ -38,6 +38,7 @@ class DataCleaning:
         self.df_user_data['date_of_birth'] = pd.to_datetime(self.df_user_data['date_of_birth'], infer_datetime_format=True, errors='coerce').dt.date
         # Converting the 'join_date' column to ISO format, it has dates in 3 different formats, so creating a consistent date ISO date format column:
         self.df_user_data['join_date'] = pd.to_datetime(self.df_user_data['join_date'], infer_datetime_format=True, errors='coerce').dt.date
+        return self.df_user_data
         # self.df_user_data.to_csv('legacy_data_update.csv',index='False')
 
     # The clean_card_data method will clean the data to remove any erroneous values, NULL values or errors in formatting:
@@ -47,8 +48,26 @@ class DataCleaning:
         pd.set_option('display.max_columns', None)
         # Assigning the extracted table to a variable named df_user_data
         self.df_card_data = extractor.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
+        # resseting the index column and dropping original index
+        self.df_card_data = self.df_card_data.reset_index(drop=True)
+        # converting the card_provider column to category dtype:
+        self.df_card_data['card_provider'] = self.df_card_data['card_provider'].astype('category')
+        # locating all rows where card_number has NULL values and there are 11 which entire row is NULL
+        null_values_df = self.df_card_data[(self.df_card_data['card_number']=='NULL')]
+        # dropping the above rows from the df
+        self.df_card_data = self.df_card_data.drop(null_values_df.index)
+        # Used the incorrect information values from the value_counts output to create a new df: incorrect_cards_info and see if all the entire row is incorrect and it was all incorect information
+        incorrect__cards_info = self.df_card_data[(self.df_card_data['card_provider'] == 'OGJTXI6X1H') | (self.df_card_data['card_provider'] == 'UA07L7EILH') | (self.df_card_data['card_provider'] == 'XGZBYBYGUW') | (self.df_card_data['card_provider'] == 'BU9U947ZGV') | (self.df_card_data['card_provider'] == 'WJVMUO4QX6') | (self.df_card_data['card_provider'] == 'DE488ORDXY') | (self.df_card_data['card_provider'] == '5CJH7ABGDR') | (self.df_card_data['card_provider'] == 'JCQMU8FN85') | (self.df_card_data['card_provider'] == 'JRPRLPIBZ2') | (self.df_card_data['card_provider'] == 'DLWF2HANZF') | (self.df_card_data['card_provider'] == '1M38DYQTZV') | (self.df_card_data['card_provider'] == 'TS8A81WFXV') | (self.df_card_data['card_provider'] == 'OGJTXI6X1H') | (self.df_card_data['card_provider'] == '5MFWFBZRM9') | (self.df_card_data['card_provider'] == 'NB71VBAHJE')]
+        # Dropped these rows from the main dataframe using the index:
+        self.df_card_data = self.df_card_data.drop(incorrect__cards_info.index)
+        # changing the dates to ISO format using infer_datetime_format as the column had multiple formats:
+        self.df_card_data['date_payment_confirmed'] = pd.to_datetime(self.df_card_data['date_payment_confirmed'], infer_datetime_format=True, errors='coerce').dt.date
+        # converting the expiry_date column to datetime and since cards expire on th last day of each month, added the day for that:
+        self.df_card_data['expiry_date'] = (pd.to_datetime(self.df_card_data['expiry_date'], format='%m/%y', errors='coerce') + pd.offsets.MonthEnd(0)).dt.date
         return self.df_card_data
 
 testing = DataCleaning()
-df_test = testing.clean_card_data()
-print(df_test.head())
+uploading = database_utils.DatabaseConnector()
+df_card_data = testing.clean_card_data()
+uploading.upload_to_db(df_card_data,'dim_card_details')
+
