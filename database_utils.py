@@ -29,3 +29,15 @@ class DatabaseConnector:
         self.inspector = sqlalchemy.inspect(self.engine)
         self.tables = self.inspector.get_table_names()
         print(self.tables)
+    
+    # the upload_to_db method will take in a Pandas dataframe and upload it to a table in a database:
+    def upload_to_db(self, upload_df, table_name):
+        # engine_url = 'postgresql+psycopg2://username:password@host:port/database'
+        # Replacing the values of username, password, host, port and database with required database details.
+        engine_url = 'postgresql+psycopg2://postgres:password@localhost:5432/Sales_Data'
+        engine = sqlalchemy.create_engine(engine_url)
+        upload_df.to_sql(name=table_name, con=engine, if_exists='replace', index=True)
+
+
+
+
