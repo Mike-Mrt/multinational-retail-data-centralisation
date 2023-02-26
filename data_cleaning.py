@@ -40,9 +40,15 @@ class DataCleaning:
         self.df_user_data['join_date'] = pd.to_datetime(self.df_user_data['join_date'], infer_datetime_format=True, errors='coerce').dt.date
         # self.df_user_data.to_csv('legacy_data_update.csv',index='False')
 
+    # The clean_card_data method will clean the data to remove any erroneous values, NULL values or errors in formatting:
+    def clean_card_data(self):
+        extractor = data_extraction.DataExtractor()
+        # Ensuring that all columns are displayed:
+        pd.set_option('display.max_columns', None)
+        # Assigning the extracted table to a variable named df_user_data
+        self.df_card_data = extractor.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
+        return self.df_card_data
+
 testing = DataCleaning()
-db_connector = database_utils.DatabaseConnector()
-db_connector.read_db_creds()
-db_connector.init_db_creds()
-testing.clean_user_data('legacy_users', db_connector)
-db_connector.upload_to_db(testing.df_user_data, 'dim_users')
+df_test = testing.clean_card_data()
+print(df_test.head())
