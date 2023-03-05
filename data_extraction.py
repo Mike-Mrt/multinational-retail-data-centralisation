@@ -1,6 +1,7 @@
 import pandas as pd
 import tabula
 import database_utils
+import requests 
 
 # Had to downgradre to SQLAlchemy version 1.4.46 in order to not attain the following error: AttributeError: 'OptionEngine' object has no attribute 'execute'
 
@@ -23,8 +24,15 @@ class DataExtractor:
         # We then return a single pd dataframe which concatenates all the lists of data frames from above:  
         return pd.concat(self.df_cards_list)
 
-# testing = DataExtractor()
+    # The list_number_of_stores method will return the number of stores to extract - it should take in the number of stores endpoint and header dictionary as an argument:
+    def list_number_of_stores(self, endpoint, header):
+        self.response = requests.get(endpoint, headers=header)
+        self.response_dict = self.response.json()
+        return self.response_dict.get("number_stores")
 
-# cards_df = testing.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
-# print(cards_df.head())
+
+testing = DataExtractor()
+api_key = {"x-api-key":"yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
+endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
+print(testing.list_number_of_stores(endpoint_api,api_key))
 
