@@ -65,9 +65,26 @@ class DataCleaning:
         # converting the expiry_date column to datetime and since cards expire on th last day of each month, added the day for that:
         self.df_card_data['expiry_date'] = (pd.to_datetime(self.df_card_data['expiry_date'], format='%m/%y', errors='coerce') + pd.offsets.MonthEnd(0)).dt.date
         return self.df_card_data
+    
+    # The clean_stores_data will clean the data retrieved from the API and return a pandas DataFrame:
+    def clean_stores_data(self):
+        retrieve_store_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{}"
+        api_key = {"x-api-key":"yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
+        extractor = data_extraction.DataExtractor()
+        num_stores_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
+        extractor.list_number_of_stores(num_stores_endpoint_api,api_key)
+        # Ensuring that all columns are displayed:
+        pd.set_option('display.max_columns', None)
+        # Assigning the extracted data from the API to a variable called df_stores_data:
+        df_stores_data = extractor.retrieve_stores_data(retrieve_store_endpoint_api, api_key)
+        print(df_stores_data.info())
+        print(df_stores_data.head())
+
+
 
 testing = DataCleaning()
-uploading = database_utils.DatabaseConnector()
-df_card_data = testing.clean_card_data()
-uploading.upload_to_db(df_card_data,'dim_card_details')
+testing.clean_stores_data()
+# uploading = database_utils.DatabaseConnector()
+# df_card_data = testing.clean_card_data()
+# uploading.upload_to_db(df_card_data,'dim_card_details')
 
