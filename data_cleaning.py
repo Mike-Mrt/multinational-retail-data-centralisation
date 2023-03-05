@@ -67,7 +67,7 @@ class DataCleaning:
         return self.df_card_data
     
     # The clean_stores_data will clean the data retrieved from the API and return a pandas DataFrame:
-    def clean_stores_data(self):
+    def clean_store_data(self):
         retrieve_store_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{}"
         api_key = {"x-api-key":"yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
         extractor = data_extraction.DataExtractor()
@@ -108,9 +108,8 @@ class DataCleaning:
 
 
 
-# testing = DataCleaning()
-# df_stores_data = testing.clean_stores_data()
-# uploading = database_utils.DatabaseConnector()
-# df_card_data = testing.clean_card_data()
-# uploading.upload_to_db(df_card_data,'dim_card_details')
+testing = DataCleaning()
+df_store_data = testing.clean_store_data()
+uploading = database_utils.DatabaseConnector()
+uploading.upload_to_db(df_store_data,'dim_store_details')
 
