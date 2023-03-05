@@ -26,13 +26,30 @@ class DataExtractor:
 
     # The list_number_of_stores method will return the number of stores to extract - it should take in the number of stores endpoint and header dictionary as an argument:
     def list_number_of_stores(self, endpoint, header):
-        self.response = requests.get(endpoint, headers=header)
-        self.response_dict = self.response.json()
-        return self.response_dict.get("number_stores")
+        response = requests.get(endpoint, headers=header)
+        self.num_stores = response.json()['number_stores']
+        return self.num_stores
+
+    # The retrieve_stores_data method will take the retrieve a store endpoint 
+    def retrieve_stores_data(self, endpoint, header):
+        num_stores = self.num_stores
+        stores_data = []
+        for store_number in range(1,num_stores):
+            current_endpoint = endpoint.format(store_number)
+            response = requests.get(current_endpoint,headers=header)
+            store = response.json()
+            stores_data.append(store)
+        return pd.DataFrame(stores_data)
+
+# testing=DataExtractor()
+# api_key = {"x-api-key":"yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
+# num_stores_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
+# testing.list_number_of_stores(num_stores_endpoint_api,api_key)
+# retrieve_store_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{}"
+# df_stores = testing.retrieve_stores_data(retrieve_store_endpoint_api,api_key)
+# print(df_stores.info())
+# print(df_stores)
 
 
-testing = DataExtractor()
-api_key = {"x-api-key":"yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
-endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
-print(testing.list_number_of_stores(endpoint_api,api_key))
+
 
