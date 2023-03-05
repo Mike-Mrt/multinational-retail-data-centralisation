@@ -73,17 +73,43 @@ class DataCleaning:
         extractor = data_extraction.DataExtractor()
         num_stores_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
         extractor.list_number_of_stores(num_stores_endpoint_api,api_key)
+        # Assigning the extracted data from the API to a variable called df_stores_data:
+        df_stores_data = extractor.retrieve_stores_data(retrieve_store_endpoint_api, api_key)
         # Ensuring that all columns are displayed:
         pd.set_option('display.max_columns', None)
         # Assigning the extracted data from the API to a variable called df_stores_data:
         df_stores_data = extractor.retrieve_stores_data(retrieve_store_endpoint_api, api_key)
-        print(df_stores_data.info())
-        print(df_stores_data.head())
+        # Setting the index column to the index column:
+        df_stores_data = df_stores_data.set_index('index')
+        # locating all rows where country_code has NULL values and there are 3 which entire row is NULL
+        null_values_df = df_stores_data[(df_stores_data['country_code']=='NULL')]
+        # dropping the above rows from the df
+        df_stores_data = df_stores_data.drop(null_values_df.index)
+        # Used the incorrect information values from the value_counts output to create a new df: incorrect_stores_info and see if all the entire row is incorrect and it was all incorect information
+        incorrect__stores_info = df_stores_data[(df_stores_data['country_code'] == 'B3EH2ZGQAV') | (df_stores_data['country_code'] == 'F3AO8V2LHU') | (df_stores_data['country_code'] == 'FP8DLXQVGH') | (df_stores_data['country_code'] == 'HMHIFNLOBN') | (df_stores_data['country_code'] == 'OH20I92LX3') | (df_stores_data['country_code'] == 'OYVW925ZL8') | (df_stores_data['country_code'] == 'YELVM536YT')]
+        # Dropped these rows from the main dataframe using the index:
+        df_stores_data = df_stores_data.drop(incorrect__stores_info.index)
+        # The below uses the regular expression '\D+' to identify any non-numeric characters with an empty string:
+        df_stores_data['staff_numbers'] = df_stores_data['staff_numbers'].str.replace(r'\D+', '')
+        # Converting the longitude and latitude as floats and staff_numbers into int:
+        df_stores_data['longitude'] = df_stores_data['longitude'].astype('float64')
+        df_stores_data['latitude'] = df_stores_data['latitude'].astype('float64')
+        df_stores_data['staff_numbers'] = df_stores_data['staff_numbers'].astype('int64')
+        # The below replaces the 'ee' prefix of certain rows of the continent column and replaces with empty string:
+        df_stores_data['continent'] = df_stores_data['continent'].str.replace('ee','')
+        # Converting the locality, store_type, country_code and continent columns to category dtype:
+        df_stores_data['locality'] = df_stores_data['locality'].astype('category')
+        df_stores_data['store_type'] = df_stores_data['store_type'].astype('category')
+        df_stores_data['country_code'] = df_stores_data['country_code'].astype('category')
+        df_stores_data['continent'] = df_stores_data['continent'].astype('category')
+        # Changing the dates to ISO format using infer_datetime_format as the column had multiple formats:
+        df_stores_data['opening_date'] = pd.to_datetime(df_stores_data['opening_date'], infer_datetime_format=True, errors='coerce').dt.date
+        return df_stores_data
 
 
 
-testing = DataCleaning()
-testing.clean_stores_data()
+# testing = DataCleaning()
+# df_stores_data = testing.clean_stores_data()
 # uploading = database_utils.DatabaseConnector()
 # df_card_data = testing.clean_card_data()
 # uploading.upload_to_db(df_card_data,'dim_card_details')
