@@ -164,9 +164,8 @@ class DataCleaning:
 # testing = data_extraction.DataExtractor()
 # df_products = testing.extract_from_s3('s3://data-handling-public/products.csv')
 # cleaning = DataCleaning()
-# df_products_data = cleaning.convert_product_weights(df_products)
-# print(df_products_data.head())
-# df_store_data = testing.clean_store_data()
+# df_products = cleaning.convert_product_weights(df_products)
+# df_products_data = cleaning.clean_products_data(df_products)
 # uploading = database_utils.DatabaseConnector()
-# uploading.upload_to_db(df_store_data,'dim_store_details')
+# uploading.upload_to_db(df_products_data,'dim_products')
 
