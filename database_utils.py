@@ -23,7 +23,8 @@ class DatabaseConnector:
         self.DATABASE = self.credentials['RDS_DATABASE']
         self.PORT = self.credentials['RDS_PORT']
         self.engine = sqlalchemy.create_engine(f"{self.DATABASE_TYPE}+{self.DBAPI}://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DATABASE}")
-
+        return self.engine
+        
     # the list_db_tables() method will list all the tables in the database so you know which tables you can extract data from
     def list_db_tables(self):
         self.inspector = sqlalchemy.inspect(self.engine)
@@ -37,7 +38,3 @@ class DatabaseConnector:
         engine_url = 'postgresql+psycopg2://postgres:password@localhost:5432/Sales_Data'
         engine = sqlalchemy.create_engine(engine_url)
         upload_df.to_sql(name=table_name, con=engine, if_exists='replace', index=True)
-
-
-
-
