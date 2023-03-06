@@ -160,6 +160,19 @@ class DataCleaning:
         df_products_data['removed'] = df_products_data['removed'].astype('category')
         return df_products_data
 
+    # The clean_orders_table will clean the data within the orders table extracted from the RDS table: 'orders_table':
+    def clean_orders_table(self):
+        connector = database_utils.DatabaseConnector()
+        connector.read_db_creds()
+        db_connector = connector.init_db_creds()
+        extractor = data_extraction.DataExtractor()
+        df_orders = extractor.read_rds_table('orders_table', db_connector)
+        # Removing the following columns: level_0, first_name, last_name, 1:
+        df_orders.drop(['level_0', 'first_name', 'last_name', '1'], axis=1, inplace=True)
+        # setting index column as index:
+        df_orders = df_orders.set_index('index')
+        return df_orders
+        
 
 # testing = data_extraction.DataExtractor()
 # df_products = testing.extract_from_s3('s3://data-handling-public/products.csv')
@@ -168,4 +181,7 @@ class DataCleaning:
 # df_products_data = cleaning.clean_products_data(df_products)
 # uploading = database_utils.DatabaseConnector()
 # uploading.upload_to_db(df_products_data,'dim_products')
-
+testing = DataCleaning()
+df_orders = testing.clean_orders_table()
+uploading = database_utils.DatabaseConnector()
+uploading.upload_to_db(df_orders,'orders_table')
