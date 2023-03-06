@@ -1,6 +1,7 @@
 import pandas as pd
 import data_extraction
 import database_utils
+import boto3
 # from datetime import datetime
 
 class DataCleaning:
@@ -176,7 +177,13 @@ class DataCleaning:
         # setting index column as index:
         df_orders = df_orders.set_index('index')
         return df_orders
-        
+
+    # The clean_date_events method will clean the data from the extracted data events data and return a dataframe: source: 'https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json'
+    def clean_date_events(self):
+        s3 = boto3.client('s3')
+        s3.download_file('data-handling-public', 'date_details.json', 'date_details.json')
+        df_date_events = pd.read_json('date_details.json')
+        return df_date_events
 
 # testing = data_extraction.DataExtractor()
 # df_products = testing.extract_from_s3('s3://data-handling-public/products.csv')
@@ -185,5 +192,6 @@ class DataCleaning:
 # df_products_data = cleaning.clean_products_data(df_products)
 # uploading = database_utils.DatabaseConnector()
 # uploading.upload_to_db(df_products_data,'dim_products')
-# testing = DataCleaning()
-# df_orders = testing.clean_orders_table()
+testing = DataCleaning()
+df_date_events = testing.clean_date_events()
+print(df_date_events.head())
