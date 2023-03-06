@@ -147,6 +147,18 @@ class DataCleaning:
         df_products = df_products.rename(columns={'weight': 'weight_kg'}) 
         return df_products
 
+    # The clean_products_data method will clean the resulting above products_data further of any additional erroneous values:
+    def clean_products_data(self, df_products_data):
+        # The below removes the £ sign for the product price column, changes it to data type float and then changes the name of the column to let user know price is in £:
+        df_products_data['product_price'] = df_products_data['product_price'].str.replace('£', '')
+        df_products_data['product_price'] = df_products_data['product_price'].astype('float64')
+        df_products_data = df_products_data.rename(columns={'product_price': 'product_price_£'})
+        # Changing the dates to ISO format using infer_datetime_format as the column had multiple formats:
+        df_products_data['date_added'] = pd.to_datetime(df_products_data['date_added'], infer_datetime_format=True, errors='coerce').dt.date
+        # changing the category and removed columns to date type category:
+        df_products_data['category'] = df_products_data['category'].astype('category')
+        df_products_data['removed'] = df_products_data['removed'].astype('category')
+        return df_products_data
 
 
 # testing = data_extraction.DataExtractor()
