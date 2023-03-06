@@ -106,10 +106,55 @@ class DataCleaning:
         df_stores_data['opening_date'] = pd.to_datetime(df_stores_data['opening_date'], infer_datetime_format=True, errors='coerce').dt.date
         return df_stores_data
 
+    # The convert_product_weights method will take in the products_data dataframe and convert all values as float which will be in kg
+    def convert_product_weights(self, df_products):
+        # Used the incorrect information values from the value_counts output to create a new df: incorrect_stores_info and see if all the entire row is incorrect and it was all incorect information
+        incorrect__products_info = df_products[(df_products['weight'] == '9GO9NZ5JTL') | (df_products['weight'] == 'Z8ZTDGUZVU') | (df_products['weight'] == 'MX180RYSHX')]
+        # dropping the above rows from the df
+        df_products = df_products.drop(incorrect__products_info.index)
+        # Dropping values in the weight column which have Null values (entire row is NULL):
+        df_products = df_products.dropna(subset=['weight'])
+        # Iterating through each row of the 'weight' column:
+        for i, row in df_products.iterrows():
+            weight = row['weight']
+            # if 'kg' in the weight string, remove the kg and convert to float
+            if 'kg' in weight:
+                weight_kg = float(weight.replace('kg', ''))
+            # if 'g' in weight string:
+            elif 'g' in weight:
+                # some weights are calculated by number of packs by weight per pack, so splitting the 2 items, then removing 'g' and converting to kg
+                if 'x' in weight:
+                    num_packets, packet_weight = weight.split(' x ')
+                    weight_kg = float(num_packets) * float(packet_weight.replace('g','')) / 1000
+                # some weights had a mistype of '.' so removing that and calculating weight in kg
+                elif '.' in weight:
+                    weight_g = weight.replace(' .','')
+                    weight_kg = float(weight_g.replace('g','')) / 1000
+                # otherwise remove 'g' and calculate weight in kg
+                else:
+                    weight_kg = float(weight.replace('g', '')) / 1000
+           # converting the weights in ml to kg         
+            elif 'ml' in weight:
+                weight_kg = float(weight.replace('ml', '')) / 1000
+            # converting weights in oz to kg    
+            elif 'oz' in weight:
+                weight_kg = float(weight.replace('oz','')) / 35.274
+            # reaplacing the caulcated weight in kg per iteration:
+            df_products.at[i, 'weight'] = weight_kg
+        # converting the weight column to float datatype     
+        df_products['weight'] = df_products['weight'].astype('float64')
+        # converting the name of the column so users know the weight is in kg
+        df_products = df_products.rename(columns={'weight': 'weight_kg'}) 
+        return df_products
 
 
-testing = DataCleaning()
-df_store_data = testing.clean_store_data()
-uploading = database_utils.DatabaseConnector()
-uploading.upload_to_db(df_store_data,'dim_store_details')
+
+# testing = data_extraction.DataExtractor()
+# df_products = testing.extract_from_s3('s3://data-handling-public/products.csv')
+# cleaning = DataCleaning()
+# df_products_data = cleaning.convert_product_weights(df_products)
+# print(df_products_data.head())
+# df_store_data = testing.clean_store_data()
+# uploading = database_utils.DatabaseConnector()
+# uploading.upload_to_db(df_store_data,'dim_store_details')
 
