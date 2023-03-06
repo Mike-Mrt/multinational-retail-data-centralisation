@@ -1,7 +1,8 @@
 import pandas as pd
 import tabula
 import database_utils
-import requests 
+import requests
+import boto3
 
 # Had to downgradre to SQLAlchemy version 1.4.46 in order to not attain the following error: AttributeError: 'OptionEngine' object has no attribute 'execute'
 
@@ -41,7 +42,20 @@ class DataExtractor:
             stores_data.append(store)
         return pd.DataFrame(stores_data)
 
+    # The extract_from_s3 method will use the boto3 package to download and extract the information returning a pandas dataframe, it will take in the S3 address as an argument:
+    def extract_from_s3(self, s3_address): # s3://data-handling-public/products.csv
+        contents = s3_address.split('/')
+        s3 = boto3.client('s3')
+        s3.download_file(contents[2], contents[3], contents[3])
+        df_products = pd.read_csv(contents[3])
+        df_products = df_products.rename(columns={'Unnamed: 0': 'index'})
+        df_products = df_products.set_index('index')
+        return df_products
+
+
 # testing=DataExtractor()
+# df = testing.extract_from_s3('s3://data-handling-public/products.csv')
+# print(df.head())
 # api_key = {"x-api-key":"yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
 # num_stores_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
 # testing.list_number_of_stores(num_stores_endpoint_api,api_key)
