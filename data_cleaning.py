@@ -108,6 +108,10 @@ class DataCleaning:
 
     # The convert_product_weights method will take in the products_data dataframe and convert all values as float which will be in kg
     def convert_product_weights(self, df_products):
+        # renaming the index column:
+        df_products = df_products.rename(columns={'Unnamed: 0': 'index'})
+        # setting index to index column:
+        df_products = df_products.set_index('index')
         # Used the incorrect information values from the value_counts output to create a new df: incorrect_stores_info and see if all the entire row is incorrect and it was all incorect information
         incorrect__products_info = df_products[(df_products['weight'] == '9GO9NZ5JTL') | (df_products['weight'] == 'Z8ZTDGUZVU') | (df_products['weight'] == 'MX180RYSHX')]
         # dropping the above rows from the df
@@ -181,7 +185,5 @@ class DataCleaning:
 # df_products_data = cleaning.clean_products_data(df_products)
 # uploading = database_utils.DatabaseConnector()
 # uploading.upload_to_db(df_products_data,'dim_products')
-testing = DataCleaning()
-df_orders = testing.clean_orders_table()
-uploading = database_utils.DatabaseConnector()
-uploading.upload_to_db(df_orders,'orders_table')
+# testing = DataCleaning()
+# df_orders = testing.clean_orders_table()
