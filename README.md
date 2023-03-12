@@ -16,10 +16,17 @@ The aim of milestone 2 is to write python scripts which will connect to the data
 
 The aim of milestone 3 is to develop a star based schema for the database and convert the columns in the tables of the database to the correct datatype.
 
-Starting with the orders table, converted:
+With the orders_table, converted:
 - the date_uuid and user_uuid columns from text to uuid data type
 - the card_number, store_code and product_code columns from text to varchar(x) where x represents the maximum number of characters of the column
 - the product_quantity from bigint to smallint to save memory
+
+With the dim_users table, converted:
+- the user_uuid column from text to uuid data type
+- the first_name and last_name from text to varchar(255)
+- the country_code from text to varchar(2)
+- the date_of_birth and join_date columns were already in the date data type from the data cleaning process so it was uncessary to convert these columns
+
 
 
 > Insert screenshot of what you have built working.
