@@ -183,7 +183,20 @@ class DataCleaning:
         s3 = boto3.client('s3')
         s3.download_file('data-handling-public', 'date_details.json', 'date_details.json')
         df_date_events = pd.read_json('date_details.json')
+        # Checking if rows with Null values in the time_period column has Null values for entire row:
+        null_values_df = df_date_events[(df_date_events['time_period']=='NULL')]
+        # Dropping these rows from the original dataframe:
+        df_date_events = df_date_events.drop(null_values_df.index)
+        # Used the incorrect information values from the value_counts output to create a new df: incorrect_stores_info and see if all the entire row is incorrect and it was all incorect information
+        incorrect_date_events_df = df_date_events[(df_date_events['time_period'] == '5MUU1NKRED') | (df_date_events['time_period'] == 'IXNB2XXEKB') | (df_date_events['time_period'] == 'SYID3PBQLP') | (df_date_events['time_period'] == 'DZC37NLW4F') | (df_date_events['time_period'] == 'JMW951JPZC') | (df_date_events['time_period'] == 'YRYN6Y8SPJ') | (df_date_events['time_period'] == 'QA65EOIBX4') | (df_date_events['time_period'] == 'KQVJ34AINL') | (df_date_events['time_period'] == '1PZDMCME1C') | (df_date_events['time_period'] == 'SSF9ANE440') | (df_date_events['time_period'] == '7RR8SRXQAW') | (df_date_events['time_period'] == '7DNU2UWFP7') | (df_date_events['time_period'] == 'EOHYT5T70F') | (df_date_events['time_period'] == 'ALOGCWS9Y3') | (df_date_events['time_period'] == 'SQX52VSNMM') | (df_date_events['time_period'] == '1JCRGU3GIE') | (df_date_events['time_period'] == '5OQGE7K2AV') | (df_date_events['time_period'] == 'CM5MTJKXMH') | (df_date_events['time_period'] == 'GT3JKF575H') | (df_date_events['time_period'] == '1Z18F4RM05') | (df_date_events['time_period'] == 'OEOXBP8X6D') | (df_date_events['time_period'] == 'DXBU6GX1VC') | (df_date_events['time_period'] == 'MZIS9E7IXD')]
+        # Dropped these rows from the main dataframe using the index:
+        df_date_events = df_date_events.drop(incorrect_date_events_df.index)
+        # Changing the time-period column to category data type:
+        df_date_events['time_period'] = df_date_events['time_period'].astype('category')
+        # Adding a column for the combined date in iso format:
+        df_date_events['iso_date'] = pd.to_datetime(df_date_events[['year','month','day']]).dt.date
         return df_date_events
+
 
 # testing = data_extraction.DataExtractor()
 # df_products = testing.extract_from_s3('s3://data-handling-public/products.csv')
