@@ -27,6 +27,8 @@ class DataCleaning:
         self.null_info = self.df_user_data[(self.df_user_data['country']=='NULL')]
         # Dropped all 21 rows from the main dataframe using the index:
         self.df_user_data = self.df_user_data.drop(self.null_info.index)
+        # converting a typo error where GB has been written as GGB in the country_code column:
+        self.df_user_data['country_code'] = self.df_user_data['country_code'].replace('GGB', 'GB')
         # Converting columns: 'country' and 'country_code' and 'company' as dtype=category to save memory:
         self.df_user_data['country'] = self.df_user_data['country'].astype('category')
         self.df_user_data['country_code'] = self.df_user_data['country_code'].astype('category')
