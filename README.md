@@ -14,9 +14,13 @@ The aim of milestone 2 is to write python scripts which will connect to the data
 
 ## Milestone 3
 
-Introduce aims of Milestone 3 and describe the aims and outcomes
+The aim of milestone 3 is to develop a star based schema for the database and convert the columns in the tables of the database to the correct datatype.
 
-```python``` # add code here
+Starting with the orders table, converted:
+- the date_uuid and user_uuid columns from text to uuid data type
+- the card_number, store_code and product_code columns from text to varchar(x) where x represents the maximum number of characters of the column
+- the product_quantity from bigint to smallint to save memory
+
 
 > Insert screenshot of what you have built working.
 
