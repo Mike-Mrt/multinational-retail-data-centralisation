@@ -35,7 +35,7 @@ class DataExtractor:
     def retrieve_stores_data(self, endpoint, header):
         num_stores = self.num_stores
         stores_data = []
-        for store_number in range(1,num_stores):
+        for store_number in range(0,num_stores):
             current_endpoint = endpoint.format(store_number)
             response = requests.get(current_endpoint,headers=header)
             store = response.json()
@@ -48,21 +48,20 @@ class DataExtractor:
         s3 = boto3.client('s3')
         s3.download_file(contents[2], contents[3], contents[3])
         df_products = pd.read_csv(contents[3])
-        df_products = df_products.rename(columns={'Unnamed: 0': 'index'})
-        df_products = df_products.set_index('index')
         return df_products
 
 
-# testing=DataExtractor()
+testing=DataExtractor()
 # df = testing.extract_from_s3('s3://data-handling-public/products.csv')
 # print(df.head())
-# api_key = {"x-api-key":"yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
-# num_stores_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
-# testing.list_number_of_stores(num_stores_endpoint_api,api_key)
-# retrieve_store_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{}"
-# df_stores = testing.retrieve_stores_data(retrieve_store_endpoint_api,api_key)
-# print(df_stores.info())
-# print(df_stores)
+api_key = {"x-api-key":"yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
+num_stores_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
+num_stores = testing.list_number_of_stores(num_stores_endpoint_api,api_key)
+print(num_stores)
+retrieve_store_endpoint_api = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{}"
+df_stores = testing.retrieve_stores_data(retrieve_store_endpoint_api,api_key)
+print(df_stores.info())
+print(df_stores)
 
 
 
