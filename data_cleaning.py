@@ -80,8 +80,6 @@ class DataCleaning:
         df_stores_data = extractor.retrieve_stores_data(retrieve_store_endpoint_api, api_key)
         # Ensuring that all columns are displayed:
         pd.set_option('display.max_columns', None)
-        # Assigning the extracted data from the API to a variable called df_stores_data:
-        df_stores_data = extractor.retrieve_stores_data(retrieve_store_endpoint_api, api_key)
         # Setting the index column to the index column:
         df_stores_data = df_stores_data.set_index('index')
         # locating all rows where country_code has NULL values and there are 3 which entire row is NULL
@@ -94,9 +92,7 @@ class DataCleaning:
         df_stores_data = df_stores_data.drop(incorrect__stores_info.index)
         # The below uses the regular expression '\D+' to identify any non-numeric characters with an empty string:
         df_stores_data['staff_numbers'] = df_stores_data['staff_numbers'].str.replace(r'\D+', '')
-        # Converting the longitude and latitude as floats and staff_numbers into int:
-        df_stores_data['longitude'] = df_stores_data['longitude'].astype('float64')
-        df_stores_data['latitude'] = df_stores_data['latitude'].astype('float64')
+        # Converting the staff_numbers into int:
         df_stores_data['staff_numbers'] = df_stores_data['staff_numbers'].astype('int64')
         # The below replaces the 'ee' prefix of certain rows of the continent column and replaces with empty string:
         df_stores_data['continent'] = df_stores_data['continent'].str.replace('ee','')
@@ -208,5 +204,3 @@ class DataCleaning:
 # uploading = database_utils.DatabaseConnector()
 # uploading.upload_to_db(df_products_data,'dim_products')
 testing = DataCleaning()
-df_date_events = testing.clean_date_events()
-print(df_date_events.head())
