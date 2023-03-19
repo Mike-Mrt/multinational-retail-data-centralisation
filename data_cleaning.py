@@ -66,7 +66,7 @@ class DataCleaning:
         # changing the dates to ISO format using infer_datetime_format as the column had multiple formats:
         self.df_card_data['date_payment_confirmed'] = pd.to_datetime(self.df_card_data['date_payment_confirmed'], infer_datetime_format=True, errors='coerce').dt.date
         # converting the expiry_date column to datetime and since cards expire on th last day of each month, added the day for that:
-        self.df_card_data['expiry_date'] = (pd.to_datetime(self.df_card_data['expiry_date'], format='%m/%y', errors='coerce') + pd.offsets.MonthEnd(0)).dt.date
+        # self.df_card_data['expiry_date'] = (pd.to_datetime(self.df_card_data['expiry_date'], format='%m/%y', errors='coerce') + pd.offsets.MonthEnd(0)).dt.date
         return self.df_card_data
     
     # The clean_stores_data will clean the data retrieved from the API and return a pandas DataFrame:
