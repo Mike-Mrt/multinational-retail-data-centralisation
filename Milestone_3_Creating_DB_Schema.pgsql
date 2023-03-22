@@ -67,6 +67,11 @@ ALTER COLUMN latitude TYPE float USING latitude::float,
 ALTER COLUMN country_code TYPE varchar(2) USING country_code::varchar(2),
 ALTER COLUMN continent TYPE varchar(255) USING continent::varchar(255);
 
+-- Changing the continent and country_code of the web portal store to NA:
+UPDATE dim_store_details
+SET country_code = 'NA', continent = 'N/A'
+WHERE store_code = 'WEB-1388012W';
+
 -- M3 - T4:
 -- Selects all rows and columns from the dim_products:
 SELECT * FROM dim_products;
