@@ -1,4 +1,4 @@
--- This document will outline the postgresSQL queries run on the tables that have been uploaded to the Sales_Data database for Milestone 3:
+-- This document will outline the postgresSQL queries run on the tables that have been uploaded to the Sales_Data database for Milestone 3, which will create the database schema:
 
 -- M3 - T1:
 -- Selects all rows and columns from the orders_table:
@@ -170,3 +170,27 @@ ALTER TABLE dim_card_details
 	ADD CONSTRAINT dim_card_details_pk PRIMARY KEY (card_number);
 
 -- M3 - T9:
+/* With the primary keys created in the tables prefixed with dim we can now create the foreign keys in the orders_table to reference the 
+primary keys in the other tables. This makes the star-based database schema complete. */
+
+ALTER TABLE orders_table
+	ADD CONSTRAINT orders_table_user_fk FOREIGN KEY (user_uuid)
+    REFERENCES dim_users(user_uuid);
+
+ALTER TABLE orders_table
+	ADD CONSTRAINT orders_table_store_fk FOREIGN KEY (store_code)
+    REFERENCES dim_store_details(store_code);
+
+ALTER TABLE orders_table
+	ADD CONSTRAINT orders_table_products_fk FOREIGN KEY (product_code)
+    REFERENCES dim_products(product_code);
+
+ALTER TABLE orders_table
+	ADD CONSTRAINT orders_table_date_fk FOREIGN KEY (date_uuid)
+    REFERENCES dim_date_times(date_uuid);
+
+ALTER TABLE orders_table
+	ADD CONSTRAINT orders_table_card_fk FOREIGN KEY (card_number)
+    REFERENCES dim_card_details(card_number);
+
+
