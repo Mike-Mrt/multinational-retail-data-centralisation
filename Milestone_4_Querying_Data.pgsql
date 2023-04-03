@@ -26,10 +26,10 @@ LIMIT 7; -- limit the output to the top 7 localities
 /* Which months produce the average highest cost of sales typically?
 Query the database to find out which months typically have the most sales. */
 
-SELECT dd.month, ROUND(SUM(op.product_price_£ * oo.product_quantity)::numeric, 2) AS total_sales -- selects the month column from dim_date_times and sum of sales which is product price times product_quantity, casting this as numeric and rounding to 2 dp.
+SELECT dd.month, ROUND(SUM(dp.product_price_£ * oo.product_quantity)::numeric, 2) AS total_sales -- selects the month column from dim_date_times and sum of sales which is product price times product_quantity, casting this as numeric and rounding to 2 dp.
 FROM orders_table AS oo -- from the orders_table joining thhe dim_date_times and dim_products using their primary and foreign keys assigned earlier
     JOIN dim_date_times AS dd ON oo.date_uuid = dd.date_uuid
-    JOIN dim_products AS op ON oo.product_code = op.product_code
+    JOIN dim_products AS dp ON oo.product_code = dp.product_code
 GROUP BY dd.month -- grouping by monthh as we want total sales by month
 ORDER BY total_sales DESC -- ordering this in descending order by total price 
 LIMIT 6; -- limiting the number of rows to 6 
@@ -52,4 +52,17 @@ FROM orders_table AS oo -- joining the dim_date_times table and dim_store_detail
     JOIN dim_store_details AS dsd ON oo.store_code = dsd.store_code
 GROUP BY location; -- grouping by the newly formed location column which has 2 categories
 
+-- M4 - T5:
+/* What percentage of sales come through each store type?
+The sales team wants to know which of the different store types is generated the most revenue
+so they know where to focus. Find out the total and percentage of sales coming from
+each of the different store types.*/
 
+SELECT
+	dsd.store_type, -- selects the store_type column from the dim_store_details table
+    ROUND(SUM(dp.product_price_£ * oo.product_quantity)::numeric, 2) AS total_sales, -- creates a total_sales column for the sum of total sales 
+    ROUND(((SUM(dp.product_price_£ * oo.product_quantity)::numeric /SUM(SUM(dp.product_price_£ * oo.product_quantity)::numeric) OVER())*100), 2) AS percentage_total -- calculates the % of total sales per store_type, OVER function is used to compute the overall sum of total_sales
+FROM orders_table AS oo -- joining the dim_products and dim_store_details to thhe order_table
+    JOIN dim_products AS dp ON oo.product_code = dp.product_code
+    JOIN dim_store_details AS dsd ON oo.store_code = dsd.store_code
+GROUP BY dsd.store_type; -- grouping by store_type
