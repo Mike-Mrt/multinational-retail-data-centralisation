@@ -34,3 +34,22 @@ GROUP BY dd.month -- grouping by monthh as we want total sales by month
 ORDER BY total_sales DESC -- ordering this in descending order by total price 
 LIMIT 6; -- limiting the number of rows to 6 
 
+-- M4 - T4:
+/* How many sales are coming from online?
+The company is looking to increase its online sales. They want to know how many sales are 
+happening online vs offline. Calculate how many products were sold and the amount of sales made 
+for online and offline purchases. */
+
+SELECT -- the CASE is used to create a location column according to the store_type in the dim_store_details table. 
+    CASE 
+        WHEN dsd.store_type = 'Web Portal' THEN 'Online' -- labels store_type Web Portal as Online 
+        ELSE 'Offline' -- and the rest as offline
+    END AS location, -- renaming this column now as location
+    COUNT(dd.*) AS num_sales, -- dim_date_times shows all transations so counting this will provide total number of sales
+    SUM(oo.product_quantity) AS total_quantity -- summing the product_quantity column from the orders_table provides total quantity of products sold
+FROM orders_table AS oo -- joining the dim_date_times table and dim_store_details table to the orders_table
+    JOIN dim_date_times AS dd ON oo.date_uuid = dd.date_uuid
+    JOIN dim_store_details AS dsd ON oo.store_code = dsd.store_code
+GROUP BY location; -- grouping by the newly formed location column which has 2 categories
+
+
