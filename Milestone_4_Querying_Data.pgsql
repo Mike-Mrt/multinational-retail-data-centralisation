@@ -22,3 +22,15 @@ GROUP BY locality -- we are grouping by locality as we want to see total_no_stor
 ORDER BY total_no_stores DESC -- we then organise the data in descending order from the locality with the highest number of stores to the lowest
 LIMIT 7; -- limit the output to the top 7 localities 
 
+-- M4 - T3:
+/* Which months produce the average highest cost of sales typically?
+Query the database to find out which months typically have the most sales. */
+
+SELECT dd.month, ROUND(SUM(op.product_price_£ * oo.product_quantity)::numeric, 2) AS total_sales -- selects the month column from dim_date_times and sum of sales which is product price times product_quantity, casting this as numeric and rounding to 2 dp.
+FROM orders_table AS oo -- from the orders_table joining thhe dim_date_times and dim_products using their primary and foreign keys assigned earlier
+    JOIN dim_date_times AS dd ON oo.date_uuid = dd.date_uuid
+    JOIN dim_products AS op ON oo.product_code = op.product_code
+GROUP BY dd.month -- grouping by monthh as we want total sales by month
+ORDER BY total_sales DESC -- ordering this in descending order by total price 
+LIMIT 6; -- limiting the number of rows to 6 
+
