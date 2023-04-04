@@ -66,3 +66,20 @@ FROM orders_table AS oo -- joining the dim_products and dim_store_details to thh
     JOIN dim_products AS dp ON oo.product_code = dp.product_code
     JOIN dim_store_details AS dsd ON oo.store_code = dsd.store_code
 GROUP BY dsd.store_type; -- grouping by store_type
+
+-- M4 - T6:
+/* Which month in each year produced the highest cost of sales?
+The company stakeholders want reassurance hat the company has been doing well recently.
+Find which months in whhihch years have had the most sales historically.*/
+
+SELECT
+	dd.year, -- selecting the column outputs, including year from dim_date_times
+	dd.month, -- monthhh column from dim_date_times
+	ROUND(SUM(dp.product_price_£ * oo.product_quantity)::numeric, 2) AS total_sales -- creating a column for total sales rounded 2 2dp
+FROM orders_table AS oo -- joining thhe dim_date_times and dim_product tables to orders_table
+	JOIN dim_date_times AS dd ON oo.date_uuid = dd.date_uuid
+	JOIN dim_products AS dp ON oo.product_code = dp.product_code
+GROUP BY dd.year, dd.month -- grouping by both year and month 
+ORDER BY total_sales DESC -- order the total_sales from highest to lowest
+LIMIT 10; -- limiting  the results to 10 rows 
+
