@@ -95,3 +95,19 @@ FROM dim_store_details
 WHERE country_code != 'NA' -- condition for the output to not have country_code NA which refers to Web Portal store_type
 GROUP BY country_code; -- grouping by country_code to see headcount in each country
 
+-- M4 - T8:
+/* Which German store type is selling the most?
+The sales team is looking to expand their territory in Germany. Determine which tye of store 
+is generating the most sales in Germany. */
+
+SELECT
+	dsd.country_code,
+	dsd.store_type,
+	ROUND(SUM(dp.product_price_£ * oo.product_quantity)::numeric, 2) AS total_sales
+FROM orders_table AS oo
+	JOIN dim_store_details AS dsd ON oo.store_code = dsd.store_code
+	JOIN dim_products AS dp ON oo.product_code = dp.product_code
+WHERE dsd.country_code = 'DE'
+GROUP BY dsd.country_code, dsd.store_type
+ORDER BY total_sales DESC;
+
