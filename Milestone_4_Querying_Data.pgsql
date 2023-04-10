@@ -83,3 +83,15 @@ GROUP BY dd.year, dd.month -- grouping by both year and month
 ORDER BY total_sales DESC -- order the total_sales from highest to lowest
 LIMIT 10; -- limiting  the results to 10 rows 
 
+-- M4 - T7:
+/* What is our staff headcount?
+The operations team would like to know the overall staff numbers in each location around the world. 
+Perform a query to determine the staff numbers in each of the countries the company sells in. */
+
+SELECT
+	country_code, -- selecting country_code from dim_store_details table
+	SUM(staff_numbers) AS total_staff_numbers -- summing the staff_numbers column in dim_store_details 
+FROM dim_store_details
+WHERE country_code != 'NA' -- condition for the output to not have country_code NA which refers to Web Portal store_type
+GROUP BY country_code; -- grouping by country_code to see headcount in each country
+
