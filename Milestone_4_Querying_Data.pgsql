@@ -101,13 +101,44 @@ The sales team is looking to expand their territory in Germany. Determine which 
 is generating the most sales in Germany. */
 
 SELECT
-	dsd.country_code,
-	dsd.store_type,
-	ROUND(SUM(dp.product_price_£ * oo.product_quantity)::numeric, 2) AS total_sales
-FROM orders_table AS oo
+	dsd.country_code, -- select the country_code column
+	dsd.store_type, -- selecting the store_tyoe column
+	ROUND(SUM(dp.product_price_£ * oo.product_quantity)::numeric, 2) AS total_sales -- calculting the total_sales by summing product price multiplied by product quantity and rounding to 2 dp
+FROM orders_table AS oo -- joining the orders_table to the dim_store_details and _dim_products tables
 	JOIN dim_store_details AS dsd ON oo.store_code = dsd.store_code
 	JOIN dim_products AS dp ON oo.product_code = dp.product_code
-WHERE dsd.country_code = 'DE'
-GROUP BY dsd.country_code, dsd.store_type
-ORDER BY total_sales DESC;
+WHERE dsd.country_code = 'DE' -- filtering out for results only in germany
+GROUP BY dsd.country_code, dsd.store_type -- grouping by country and store type
+ORDER BY total_sales DESC; -- ordering by total_sales to find the top sales by store type
 
+-- M4 - T9:
+/* How quickly is the company making sales?
+Sales would like to get an accurate metric for how quickly the company is making sales.
+Determine the average time taken between each sale grouped by year. */
+
+-- creating a comman tabkle expression for entire timestamp by concatenating the iso_date and timestamp columns
+WITH cte AS (
+SELECT
+	CAST(CONCAT(iso_date,' ',timestamp) AS timestamp) AS datetimes, year -- we label this as datetimes for the entire datetime and also pull out year
+FROM dim_date_times)
+	
+SELECT -- here we want to present the final results in the format required so we extract the hour, mins etc from the avg_time_between_sales and assign it to thhe description and concatenate it all
+  year,
+  CONCAT(
+    '"hours": ', EXTRACT(HOUR FROM avg_time_between_sales)::text,
+    ', "minutes": ', EXTRACT(MINUTE FROM avg_time_between_sales)::text,
+    ', "seconds": ', ROUND(EXTRACT(SECOND FROM avg_time_between_sales),0)::text,
+    ', "milliseconds": ', ROUND(EXTRACT(MILLISECOND FROM avg_time_between_sales),0)::text
+  ) AS actual_time_taken
+FROM (
+  SELECT -- use the calculated time_between_sales to find the avergae time between sales for each year
+	year,
+    AVG(time_between_sales) AS avg_time_between_sales
+  FROM (
+    SELECT -- calculate the time_between_sales using LEAD to calculate time for each interval between sales partitioned by year
+      year,
+      LEAD(datetimes) OVER (PARTITION BY year ORDER BY datetimes) - datetimes AS time_between_sales 
+    FROM cte
+  ) AS sales
+	GROUP BY year -- grouping by year as we want to see the rate of sale by year
+) AS avg_sales;
