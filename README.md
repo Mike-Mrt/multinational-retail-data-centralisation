@@ -286,7 +286,6 @@ class DataCleaning:
         df_date_events['iso_date'] = pd.to_datetime(df_date_events[['year','month','day']]).dt.date
         return df_date_events
 ```
- The scripts can be found with detailed explanations on my GitHub folder.
 
 ## Milestone 3
 
@@ -303,9 +302,12 @@ With the dim_users table, converted:
 - the country_code from text to varchar(2)
 - the date_of_birth and join_date columns were already in the date data type from the data cleaning process so it was uncessary to convert these columns
 
+The image shows the Sales_Data database. SQL queries were used in PGAdmin 4 to construct a star-schema within this database, along with altering data types as required.
 
+<p align="center">
+<img src="./images/PostgreSQL_Sales_Data_DB.png" alt="Screenshot of Sales_Data database in PGAdmin4" width="300" height="400" />
 
-> Insert screenshot of what you have built working.
+This is made possible by using PGAdmin 4 to interact with a PostreSQL server.
 
 ## Milestone 4
 
