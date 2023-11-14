@@ -351,6 +351,11 @@ The output of the above is presented below:
 
 ## Conclusions
 
-Concluding comments, was the project successful
-What does the project accomplish
-What could be improved etc 
+The Multinational Retail Data Centralization project was highly successful. It began by developing Python scripts to connect with various data sources, extracting valuable information, and then rigorously cleaning and centralizing this data in a PostgreSQL database using PGAdmin4 as the management tool. The creation of a star-based schema enabled efficient data querying and analysis.
+
+The primary goal was to empower our management team with data-driven insights to maintain our competitive edge in the market.
+
+However, there are areas for improvement:
+    - Enhance code efficiency by modularising data cleaning processes for better maintainability.
+    - Implement real-time data updates from various sources to ensure continuous data-driven decision-making.
+    - Explore opportunities to acquire data from competitors through legal channels to gain a competitive advantage against market leaders." 
