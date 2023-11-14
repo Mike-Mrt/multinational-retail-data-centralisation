@@ -9,7 +9,7 @@ import boto3
 class DataExtractor:
     '''
     This class will work as a utility class, in this class, methods will be created that will help extract data from different data sources.
-    The methods contained will be fit to extract data from a particular data source, including CSV files, an API and an S3 bucket.
+    The methods contained will be fit to extract data from a particular data source, includingAWS RDS database, AWS S3 bucket, RESTful API, JSON, CSV files.
     '''
 
     # The read_rds_table() method will extract the database table to a pandas dataframe. It will take an instance of the DatabaseConnector Class and the table name as an argument and return a pandas dataframe
