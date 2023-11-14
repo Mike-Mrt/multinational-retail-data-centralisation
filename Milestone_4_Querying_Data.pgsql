@@ -116,7 +116,7 @@ ORDER BY total_sales DESC; -- ordering by total_sales to find the top sales by s
 Sales would like to get an accurate metric for how quickly the company is making sales.
 Determine the average time taken between each sale grouped by year. */
 
--- creating a comman tabkle expression for entire timestamp by concatenating the iso_date and timestamp columns
+-- creating a comman table expression for entire timestamp by concatenating the iso_date and timestamp columns
 WITH cte AS (
 SELECT
 	CAST(CONCAT(iso_date,' ',timestamp) AS timestamp) AS datetimes, year -- we label this as datetimes for the entire datetime and also pull out year
@@ -129,7 +129,7 @@ SELECT -- here we want to present the final results in the format required so we
     ', "minutes": ', EXTRACT(MINUTE FROM avg_time_between_sales)::text,
     ', "seconds": ', ROUND(EXTRACT(SECOND FROM avg_time_between_sales),0)::text,
     ', "milliseconds": ', ROUND(EXTRACT(MILLISECOND FROM avg_time_between_sales),0)::text
-  ) AS actual_time_taken
+  ) AS average_time_taken_between_sales
 FROM (
   SELECT -- use the calculated time_between_sales to find the avergae time between sales for each year
 	year,

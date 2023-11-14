@@ -311,11 +311,43 @@ This is made possible by using PGAdmin 4 to interact with a PostreSQL server.
 
 ## Milestone 4
 
-Introduce aims of Milestone 4 and describe the aims and outcomes
+In the final phase of the project, the aim is to obtain up-to-date business metrics to aid in the company's business decision making. SQL queries have been designed to extract specific metrics requested by the management team so that they can make more data-driven decisions and get a better understanding of the company's sales. 
 
-```python``` # add code here
+An example query is provided below: How quickly is the company making sales?
+In this case, we are looking to determine the average time taken between each sale grouped by year.
+```SQL
+-- creating a comman table expression for entire timestamp by concatenating the iso_date and timestamp columns
+WITH cte AS (
+SELECT
+	CAST(CONCAT(iso_date,' ',timestamp) AS timestamp) AS datetimes, year -- we label this as datetimes for the entire datetime and also pull out year
+FROM dim_date_times)
+	
+SELECT -- here we want to present the final results in the format required so we extract the hour, mins etc from the avg_time_between_sales and assign it to thhe description and concatenate it all
+  year,
+  CONCAT(
+    '"hours": ', EXTRACT(HOUR FROM avg_time_between_sales)::text,
+    ', "minutes": ', EXTRACT(MINUTE FROM avg_time_between_sales)::text,
+    ', "seconds": ', ROUND(EXTRACT(SECOND FROM avg_time_between_sales),0)::text,
+    ', "milliseconds": ', ROUND(EXTRACT(MILLISECOND FROM avg_time_between_sales),0)::text
+  ) AS average_time_taken_between_sales
+FROM (
+  SELECT -- use the calculated time_between_sales to find the avergae time between sales for each year
+	year,
+    AVG(time_between_sales) AS avg_time_between_sales
+  FROM (
+    SELECT -- calculate the time_between_sales using LEAD to calculate time for each interval between sales partitioned by year
+      year,
+      LEAD(datetimes) OVER (PARTITION BY year ORDER BY datetimes) - datetimes AS time_between_sales 
+    FROM cte
+  ) AS sales
+	GROUP BY year -- grouping by year as we want to see the rate of sale by year
+) AS avg_sales;
+``` 
 
-> Insert screenshot of what you have built working.
+The output of the above is presented below:
+
+<p align="center">
+<img src="./images/Query_Output.png" alt="Screenshot of one of the query outputs" width="300" height="400" />
 
 ## Conclusions
 
